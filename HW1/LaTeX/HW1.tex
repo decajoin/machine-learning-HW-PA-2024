@@ -1,0 +1,347 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{amsmath}
+\usepackage{quicklatex}
+\usepackage{titlesec}
+\usepackage{fancyhdr}  
+\usepackage{enumitem}
+
+
+% 设置页面样式
+\pagestyle{fancy}
+\fancyhf{}  % 清除所有页眉页脚
+\fancyfoot[C]{\thepage}  % 在页脚中间显示页码
+\renewcommand{\headrulewidth}{0pt}  % 去除页眉横线
+
+
+% 设置 section 标题左对齐
+\titleformat{\section}{\normalfont\Large\bfseries}{}{0em}{}
+
+\begin{document}
+	
+	\title{机器学习第二次作业}
+	\author{人工智能 222 杨义琦}
+	\date{\today}
+	\maketitle
+	
+	\section{题目1}
+	\textbf{题目描述：}
+	
+	试给出求解 and 和 or 逻辑运算的感知机，并说明感知机不能求解 xor 运算。
+	
+	\textbf{题解：}
+	
+	感知机模型为 $f(X)=\text{sign}(w \cdot x + b)$，其中当输入大于0时输出1，否则输出0。
+	
+	\begin{enumerate}
+		\item 求解 AND 的感知机：
+		
+		AND 运算的真值表：
+		\begin{center}
+			\begin{tabular}{|c|c|c|}
+				\hline
+				$x_1$ & $x_2$ & AND \\
+				\hline
+				0 & 0 & 0 \\
+				0 & 1 & 0 \\
+				1 & 0 & 0 \\
+				1 & 1 & 1 \\
+				\hline
+			\end{tabular}
+		\end{center}
+		
+		可以设置参数：$w_1 = 1$, $w_2 = 1$, $b = -1.5$
+		
+		验证：
+		\begin{itemize}
+			\item 当 $x_1=0$, $x_2=0$ 时：$1\cdot0 + 1\cdot0 - 1.5 = -1.5 < 0$ 输出0
+			\item 当 $x_1=0$, $x_2=1$ 时：$1\cdot0 + 1\cdot1 - 1.5 = -0.5 < 0$ 输出0
+			\item 当 $x_1=1$, $x_2=0$ 时：$1\cdot1 + 1\cdot0 - 1.5 = -0.5 < 0$ 输出0
+			\item 当 $x_1=1$, $x_2=1$ 时：$1\cdot1 + 1\cdot1 - 1.5 = 0.5 > 0$ 输出1
+		\end{itemize}
+		
+		\item 求解 OR 的感知机：
+		
+		OR 运算的真值表：
+		\begin{center}
+			\begin{tabular}{|c|c|c|}
+				\hline
+				$x_1$ & $x_2$ & OR \\
+				\hline
+				0 & 0 & 0 \\
+				0 & 1 & 1 \\
+				1 & 0 & 1 \\
+				1 & 1 & 1 \\
+				\hline
+			\end{tabular}
+		\end{center}
+		
+		可以设置参数：$w_1 = 1$, $w_2 = 1$, $b = -0.5$
+		
+		验证：
+		\begin{itemize}
+			\item 当 $x_1=0$, $x_2=0$ 时：$1\cdot0 + 1\cdot0 - 0.5 = -0.5 < 0$ 输出0
+			\item 当 $x_1=0$, $x_2=1$ 时：$1\cdot0 + 1\cdot1 - 0.5 = 0.5 > 0$ 输出1
+			\item 当 $x_1=1$, $x_2=0$ 时：$1\cdot1 + 1\cdot0 - 0.5 = 0.5 > 0$ 输出1
+			\item 当 $x_1=1$, $x_2=1$ 时：$1\cdot1 + 1\cdot1 - 0.5 = 1.5 > 0$ 输出1
+		\end{itemize}
+		
+		\item 为什么不能求解 XOR 运算：
+		
+		XOR 运算的真值表：
+		\begin{center}
+			\begin{tabular}{|c|c|c|}
+				\hline
+				$x_1$ & $x_2$ & XOR \\
+				\hline
+				0 & 0 & 0 \\
+				0 & 1 & 1 \\
+				1 & 0 & 1 \\
+				1 & 1 & 0 \\
+				\hline
+			\end{tabular}
+		\end{center}
+		
+		感知机不能实现 XOR 运算的原因是它不是线性可分的。证明如下：
+		
+		假设存在权重 $w_1$, $w_2$ 和偏置 $b$，使得感知机能实现 XOR 运算，则应满足：
+		\begin{align*}
+			w_1\cdot0 + w_2\cdot0 + b &< 0 \quad \text{（对应(0,0)输出0）} \\
+			w_1\cdot0 + w_2\cdot1 + b &> 0 \quad \text{（对应(0,1)输出1）} \\
+			w_1\cdot1 + w_2\cdot0 + b &> 0 \quad \text{（对应(1,0)输出1）} \\
+			w_1\cdot1 + w_2\cdot1 + b &< 0 \quad \text{（对应(1,1)输出0）}
+		\end{align*}
+		
+		由第一个不等式可以我们发现 $b < 0$
+		
+		而将第二和第三个不等式相加得到 $w_1 + w_2 + 2b > 0$
+		
+		可以推出$w_1 + w_2 + b > 0$
+		
+		这与第四个不等式 $w_1 + w_2 + b < 0$ 矛盾。
+		
+		因此，不存在这样的权重和偏置使得单层感知机能够实现 XOR 运算。
+		
+		从几何角度看，这是因为 XOR 运算的输出结果在二维平面上不能用一条直线分开。
+	\end{enumerate}
+	
+	
+	
+	\section{题目2}
+	\textbf{题目描述：}
+	
+	已知正样本 $x_1=(3,3)^T$,$x_2=(4,3)^T$和负样本$x_3=(1,1)^T$，感知机模型为$f(x)=sign(w \cdot x - 3)$,$w=\begin{bmatrix}1\\1\end{bmatrix}$，试判断该感知机模型能否正确分类$x_1$,$x_2$,$x_3$，并说明理由。
+	
+	
+	\textbf{题解：}
+	
+	题目已给出感知机模型为$f(x)=sign(w \cdot x - 3)$,$w=\begin{bmatrix}1\\1\end{bmatrix}$
+	
+	验证：
+	\begin{itemize}
+		\item 正样本$x_1$：$3\cdot1 + 3\cdot1 - 3 = 3 > 0$ 输出1，分类正确
+		\item 正样本$x_2$：$4\cdot1 + 3\cdot1 - 3 = 4 > 0$ 输出1，分类正确
+		\item 负样本$x_3$：$1\cdot1 + 1\cdot1 - 3 = -1 < 0$ 输出0，分类正确
+	\end{itemize}
+	
+	所以该感知机模型可以正确的分类$x_1$,$x_2$,$x_3$
+	
+	
+	
+	\section{题目3}
+	\textbf{题目描述：}
+	
+	已知$x_1=(2,3)^T$,$x_2=(5,4)^T$,$x_3=(4,7)^T$,$x_4=(9,6)^T$,$x_5=(8,1)^T$,$x_6=(7,2)^T$，其对应的类别标签为1,1,2,2,0,0，试利用 k 近邻判断点$x=(3,4.5)^T$的类别信息(要求分别使用欧式距离、曼哈顿及无穷距离三种距离度量方法)
+	
+	
+	\textbf{题解：}
+	
+	我们将分别使用三种距离度量方法来计算目标点 $x=(3,4.5)^T$ 与已知数据点之间的距离，并选择 $k=3$，即选取最近的 3 个点来判断类别。
+	
+	\begin{enumerate}
+		\item 欧式距离
+		
+		欧式距离的公式为：
+		\[
+		d(x_i, x) = \sqrt{(x_i[1] - x[1])^2 + (x_i[2] - x[2])^2}
+		\]
+		
+		计算每个点到目标点 $x=(3,4.5)$ 的欧式距离：
+		\[
+		d(x_1, x) = \sqrt{(2 - 3)^2 + (3 - 4.5)^2} = \sqrt{1 + 2.25} = \sqrt{3.25} \approx 1.80
+		\]
+		\[
+		d(x_2, x) = \sqrt{(5 - 3)^2 + (4 - 4.5)^2} = \sqrt{4 + 0.25} = \sqrt{4.25} \approx 2.06
+		\]
+		\[
+		d(x_3, x) = \sqrt{(4 - 3)^2 + (7 - 4.5)^2} = \sqrt{1 + 6.25} = \sqrt{7.25} \approx 2.69
+		\]
+		\[
+		d(x_4, x) = \sqrt{(9 - 3)^2 + (6 - 4.5)^2} = \sqrt{36 + 2.25} = \sqrt{38.25} \approx 6.18
+		\]
+		\[
+		d(x_5, x) = \sqrt{(8 - 3)^2 + (1 - 4.5)^2} = \sqrt{25 + 12.25} = \sqrt{37.25} \approx 6.10
+		\]
+		\[
+		d(x_6, x) = \sqrt{(7 - 3)^2 + (2 - 4.5)^2} = \sqrt{16 + 6.25} = \sqrt{22.25} \approx 4.72
+		\]
+		
+		根据欧式距离的计算结果，最近的 3 个点为：$x_1$、$x_2$、$x_3$，它们的类别分别为 1、1、2。
+		
+		因此，使用欧式距离，点 $x=(3,4.5)$ 的预测类别为 1（因为在最近的 3 个邻居中，类别 1 出现两次，类别 2 出现一次）。
+		
+		\item 曼哈顿距离
+		
+		曼哈顿距离的公式为：
+		\[
+		d(x_i, x) = |x_i[1] - x[1]| + |x_i[2] - x[2]|
+		\]
+		
+		计算每个点到目标点 $x=(3,4.5)$ 的曼哈顿距离：
+		\[
+		d(x_1, x) = |2 - 3| + |3 - 4.5| = 1 + 1.5 = 2.5
+		\]
+		\[
+		d(x_2, x) = |5 - 3| + |4 - 4.5| = 2 + 0.5 = 2.5
+		\]
+		\[
+		d(x_3, x) = |4 - 3| + |7 - 4.5| = 1 + 2.5 = 3.5
+		\]
+		\[
+		d(x_4, x) = |9 - 3| + |6 - 4.5| = 6 + 1.5 = 7.5
+		\]
+		\[
+		d(x_5, x) = |8 - 3| + |1 - 4.5| = 5 + 3.5 = 8.5
+		\]
+		\[
+		d(x_6, x) = |7 - 3| + |2 - 4.5| = 4 + 2.5 = 6.5
+		\]
+		
+		根据曼哈顿距离的计算结果，最近的 3 个点为：$x_1$、$x_2$、$x_3$，它们的类别分别为 1、1、2。
+		
+		因此，使用曼哈顿距离，点 $x=(3,4.5)$ 的预测类别也是 1。
+		
+		\item 无穷距离
+		
+		无穷距离的公式为：
+		\[
+		d(x_i, x) = \max(|x_i[1] - x[1]|, |x_i[2] - x[2]|)
+		\]
+		
+		计算每个点到目标点 $x=(3,4.5)$ 的无穷距离：
+		\[
+		d(x_1, x) = \max(|2 - 3|, |3 - 4.5|) = \max(1, 1.5) = 1.5
+		\]
+		\[
+		d(x_2, x) = \max(|5 - 3|, |4 - 4.5|) = \max(2, 0.5) = 2
+		\]
+		\[
+		d(x_3, x) = \max(|4 - 3|, |7 - 4.5|) = \max(1, 2.5) = 2.5
+		\]
+		\[
+		d(x_4, x) = \max(|9 - 3|, |6 - 4.5|) = \max(6, 1.5) = 6
+		\]
+		\[
+		d(x_5, x) = \max(|8 - 3|, |1 - 4.5|) = \max(5, 3.5) = 5
+		\]
+		\[
+		d(x_6, x) = \max(|7 - 3|, |2 - 4.5|) = \max(4, 2.5) = 4
+		\]
+		
+		根据无穷距离的计算结果，最近的 3 个点为：$x_1$、$x_2$、$x_3$，它们的类别分别为 1、1、2。
+		
+		因此，使用无穷距离，点 $x=(3,4.5)$ 的预测类别仍然是 1。
+	\end{enumerate}
+	结论：无论是使用欧式距离、曼哈顿距离还是无穷距离，点 $x=(3,4.5)$ 的预测类别均为 1。
+	
+	
+	\section{题目4}
+	\textbf{题目描述：}
+	
+	试对以下数据集构造 k-d 树。$X={(7,8),(12,3),(14,1),(4,12),(9,1),(2,7),(10,19)}$，并给出$(3.5,7.8)$的搜索路径。
+	
+	
+	\textbf{题解：}
+	
+	
+	1. k-d树的构造过程：
+	
+	
+	\begin{itemize}
+
+		\item 第1层(根节点)：
+		
+		首先，确定第1层的分割维：
+		
+		$x$维度方差：$\sigma_x^2=\frac{1}{n}\sum(x_i-\bar{x})^2$，$y$维度方差：$\sigma_y^2=\frac{1}{n}\sum(y_i-\bar{y})^2$，计算可知$x$维的方差更大，所以选择$y$作为分割维。 
+		
+		按y轴划分，选择中位数y=7作为分割点，对应点(2,7)
+		\begin{itemize}
+			\item 左子树：$\{(12,3),(14,1),(9,1)\}$
+			\item 右子树：$\{(7,8),(4,12),(10,19)\}$
+		\end{itemize}
+		
+		\item 
+		
+		第2层：
+		\begin{itemize}
+			\item 左子树：
+			
+			计算方差可知$x$维的方差更大，所以选择$x$作为分割维。 
+			
+			选择中位数x=12，对应点(12,3)
+			\begin{itemize}
+				\item 左：$\{(9,1)\}$
+				\item 右：$\{(14,1)\}$
+			\end{itemize}
+			\item 右子树：
+			
+			计算方差可知$y$维的方差更大，所以选择$y$作为分割维。 
+			
+			选择中位数y=12，对应点(4,12)
+			\begin{itemize}
+				\item 左：$\{(7,8)\}$
+				\item 右：$\{(10,19)\}$
+			\end{itemize}
+		\end{itemize}
+		
+		\item 第3层：到达叶子节点，k-d树构造完成
+	\end{itemize}
+	
+	2. 搜索点(3.5,7.8)的路径：
+	
+	\begin{enumerate}[label=(\arabic*)]
+		\item 从根节点 (2,7)开始，比较y坐标：7.8 > 7，进入右子树
+		\item 到达节点(4,12)，比较y坐标：7.8 < 12，进入左子树
+		\item 到达节点(7,8)，搜索结束
+	\end{enumerate}
+	
+	3. k-d树的示意图：
+	
+	\begin{center}
+		\begin{tikzpicture}[level distance=1.5cm,
+			level 1/.style={sibling distance=5cm},
+			level 2/.style={sibling distance=2.5cm}]
+			\node {(2,7)}
+			child {
+				node {(12,3)}
+				child {
+					node {(9,1)}
+				}
+				child {
+					node {(14,1)}
+				}
+			}
+			child {
+				node {(4,12)}
+				child {
+					node {(7,8)}
+				}
+				child {
+					node {(10,19)}
+				}
+			};
+		\end{tikzpicture}
+	\end{center}
+	
+	
+\end{document}
